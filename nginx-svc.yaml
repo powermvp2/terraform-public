@@ -1,0 +1,47 @@
+# Classic Load Balancer Service for nginx-app-pod
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-app-clb-service
+  namespace: default
+  annotations:
+    # Classic Load Balancer 사용 (기본값)
+    service.beta.kubernetes.io/aws-load-balancer-type: "classic"
+    
+    # 외부 트래픽 허용
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    
+    # Connection draining 설정
+    service.beta.kubernetes.io/aws-load-balancer-connection-draining-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-connection-draining-timeout: "60"
+    
+    # Health check 설정
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "30"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-timeout: "5"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "2"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "2"
+    
+    # 특정 서브넷에 생성하고 싶다면 (선택사항)
+    # service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-12345,subnet-67890"
+    
+    # SSL 인증서 사용시 (선택사항)
+    # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:region:account:certificate/cert-id"
+    # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+    # service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  # HTTPS 포트 (SSL 인증서 사용시)
+  # - name: https
+  #   port: 443
+  #   targetPort: 80
+  #   protocol: TCP
+  selector:
+    app: nginx-app  # 기존 Pod의 labels와 맞춤
+  
+  # 세션 어피니티 설정 (필요시)
+  # sessionAffinity: ClientIP
