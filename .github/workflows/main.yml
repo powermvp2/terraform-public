@@ -105,24 +105,24 @@ jobs:
         echo "Updating nginx-deploy.yaml with version: $VERSION"
 
         # 파일 존재 확인
-        if [ ! -f "nginx-deploy.yaml" ]; then
+        if [ ! -f "manifests/nginx-app/nginx-deploy.yaml" ]; then
           echo "nginx-deploy.yaml not found!"
-          ls -la .
+          ls -la manifests/nginx-app/
           exit 1
         fi
 
         # 이미지 태그 업데이트
-        sed -i "s|image:.*$ECR_REPOSITORY:.*|image: $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION|g" nginx-deploy.yaml
+        sed -i "s|image:.*$ECR_REPOSITORY:.*|image: $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION|g" manifests/nginx-app/nginx-deploy.yaml
 
         echo "Updated image in nginx-deploy.yaml:"
-        grep "image:" nginx-deploy.yaml
+        grep "image:" manifests/nginx-app/nginx-deploy.yaml
 
     - name: Commit and push updated manifest
       run: |
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "actions@github.com"
 
-        git add nginx-deploy.yaml
+        git add manifests/nginx-app/nginx-deploy.yaml
 
         if git diff --cached --quiet; then
           echo "No changes to commit"
@@ -139,6 +139,6 @@ jobs:
         echo "=========================================="
         echo "Version: ${{ steps.version.outputs.version }}"
         echo "Image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.version.outputs.version }}"
-        echo "Kubernetes manifest updated: nginx-deploy.yaml"
+        echo "Kubernetes manifest updated: manifests/nginx-app/nginx-deploy.yaml"
         echo "ArgoCD will auto-sync the changes"
         echo "=========================================="
