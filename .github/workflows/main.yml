@@ -28,7 +28,8 @@ jobs:
       id: version
       run: |
         git fetch --tags
-        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0")
+        LAST_TAG=$(git tag --sort=-version:refname | head -1)
+        LAST_TAG=${LAST_TAG:-v1.0}
         echo "Last tag: $LAST_TAG"
 
         # vX.0 포맷에서 MAJOR 추출
