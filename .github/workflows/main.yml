@@ -9,7 +9,7 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: terraform-ecr
+  ECR_REPOSITORY: vec-prd-ecr
 
 jobs:
   build-and-push:
